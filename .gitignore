@@ -1,7 +1,14 @@
-.idea/
-*.iml
-*.iws
-*.ipr
-out/
 target/
+
+### IntelliJ IDEA ###
+.idea/
+*.iws
+*.iml
+*.ipr
+
 build/
+### VS Code ###
+.vscode/
+
+### Mac OS ###
+.DS_Store
