@@ -1,4 +1,4 @@
-package d3.soar;
+package d3.soar.classes;
 public class User {
     private String email;
     private String password;
