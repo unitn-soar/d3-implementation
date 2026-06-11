@@ -45,7 +45,6 @@ AS $$
       AND dst.airport_id = p_destination_airport_id
       AND (p_departure_airport_id IS NULL OR dep.airport_id = p_departure_airport_id)
       AND f.departure_time >= p_flight_date
-      AND f.departure_time < p_flight_date + INTERVAL '1 day'
       AND (p_earliest_departure IS NULL OR f.departure_time::TIME >= p_earliest_departure)
       AND (p_latest_departure IS NULL OR f.departure_time::TIME <= p_latest_departure)
       AND (p_airline_id IS NULL OR al.airline_id = p_airline_id)
