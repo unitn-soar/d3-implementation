@@ -819,8 +819,8 @@ $$;
 CREATE OR REPLACE FUNCTION create_person_account(
     p_email VARCHAR,
     p_password_hash VARCHAR,
-    p_name VARCHAR,
-    p_surname VARCHAR,
+    p_name VARCHAR DEFAULT NULL,
+    p_surname VARCHAR DEFAULT NULL,
     p_date_of_birth DATE DEFAULT NULL
 )
 RETURNS BIGINT
@@ -1270,3 +1270,18 @@ BEGIN
 END;
 $$;
 
+CREATE OR REPLACE FUNCTION get_airports(
+    p_nation VARCHAR DEFAULT NULL
+)
+RETURNS TABLE (
+    airport_id BIGINT,
+    airport_name VARCHAR,
+    nation VARCHAR
+)
+LANGUAGE sql
+AS $$
+    SELECT airport_id, airport_name, nation
+    FROM airports
+    WHERE (p_nation IS NULL OR nation = p_nation)
+    ORDER BY nation, airport_name;
+$$;

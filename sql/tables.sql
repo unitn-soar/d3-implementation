@@ -11,8 +11,8 @@ CREATE TABLE users (
 
 CREATE TABLE person_profiles (
     user_id BIGINT PRIMARY KEY REFERENCES users(user_id) ON DELETE CASCADE,
-    name VARCHAR(100) NOT NULL,
-    surname VARCHAR(100) NOT NULL,
+    name VARCHAR(100),
+    surname VARCHAR(100),
     date_of_birth DATE
 );
 
