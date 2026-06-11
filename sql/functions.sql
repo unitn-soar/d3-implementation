@@ -1,5 +1,5 @@
 CREATE OR REPLACE FUNCTION search_direct_flights(
-    p_destination_airport_id BIGINT,
+    p_destination_airport_id BIGINT DEFAULT NULL,
     p_departure_airport_id BIGINT DEFAULT NULL,
     p_flight_date DATE DEFAULT CURRENT_DATE,
     p_earliest_departure TIME DEFAULT NULL,
@@ -42,9 +42,10 @@ AS $$
     WHERE f.status IN ('SCHEDULED', 'DELAYED')
       AND fp.is_active = TRUE
       AND fs.seat_status = 'AVAILABLE'
-      AND dst.airport_id = p_destination_airport_id
+      AND (p_destination_airport_id IS NULL OR dst.airport_id = p_destination_airport_id)
       AND (p_departure_airport_id IS NULL OR dep.airport_id = p_departure_airport_id)
-      AND f.departure_time >= p_flight_date
+      AND f.departure_time >= COALESCE(p_flight_date, CURRENT_DATE)
+      AND f.departure_time < COALESCE(p_flight_date, CURRENT_DATE) + INTERVAL '1 day'
       AND (p_earliest_departure IS NULL OR f.departure_time::TIME >= p_earliest_departure)
       AND (p_latest_departure IS NULL OR f.departure_time::TIME <= p_latest_departure)
       AND (p_airline_id IS NULL OR al.airline_id = p_airline_id)
@@ -656,7 +657,7 @@ BEGIN
     WHERE flight_id = p_flight_id;
 
     INSERT INTO notifications (user_id, ticket_id, notification_type, channel, notification_status, scheduled_at)
-    SELECT COALESCE(ps.user_id, p.buyer_user_id), t.ticket_id, 'FLIGHT_CANCELLED', 'EMAIL', 'PENDING', NOW()
+    SELECT COALESCE(ps.user_id, p.buyer_user_id), t.ticket_id, 'FLIGHT_DELAY', 'EMAIL', 'PENDING', NOW()
     FROM tickets t
     JOIN purchases p ON p.purchase_id = t.purchase_id
     JOIN passengers ps ON ps.passenger_id = t.passenger_id
@@ -699,7 +700,7 @@ BEGIN
       AND seat_status IN ('AVAILABLE', 'HELD');
 
     INSERT INTO notifications (user_id, ticket_id, notification_type, channel, notification_status, scheduled_at)
-    SELECT COALESCE(ps.user_id, p.buyer_user_id), t.ticket_id, 'FLIGHT_DELAY', 'EMAIL', 'PENDING', NOW()
+    SELECT COALESCE(ps.user_id, p.buyer_user_id), t.ticket_id, 'FLIGHT_CANCELLED', 'EMAIL', 'PENDING', NOW()
     FROM tickets t
     JOIN purchases p ON p.purchase_id = t.purchase_id
     JOIN passengers ps ON ps.passenger_id = t.passenger_id
@@ -815,16 +816,15 @@ AS $$
     ORDER BY COUNT(t.ticket_id) DESC, SUM(t.ticket_price) DESC
 $$;
 
+DROP FUNCTION IF EXISTS create_person_account(VARCHAR, VARCHAR, VARCHAR, VARCHAR, DATE);
+
 CREATE OR REPLACE FUNCTION create_person_account(
     p_email VARCHAR,
-    p_password_hash VARCHAR,
-    p_name VARCHAR DEFAULT NULL,
-    p_surname VARCHAR DEFAULT NULL,
-    p_date_of_birth DATE DEFAULT NULL
+    p_password_hash VARCHAR
 )
 RETURNS BIGINT
 LANGUAGE plpgsql
-AS $$
+AS $
 DECLARE
     v_user_id BIGINT;
 BEGIN
@@ -832,8 +832,8 @@ BEGIN
     VALUES (p_email, p_password_hash, 'PERSON')
     RETURNING user_id INTO v_user_id;
 
-    INSERT INTO person_profiles (user_id, name, surname, date_of_birth)
-    VALUES (v_user_id, p_name, p_surname, p_date_of_birth);
+    INSERT INTO person_profiles (user_id)
+    VALUES (v_user_id);
 
     INSERT INTO notification_preferences (user_id)
     VALUES (v_user_id);
@@ -843,7 +843,7 @@ BEGIN
 
     RETURN v_user_id;
 END;
-$$;
+$;
 
 CREATE OR REPLACE FUNCTION create_travel_agency_account(
     p_email VARCHAR,
