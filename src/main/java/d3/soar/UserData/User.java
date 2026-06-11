@@ -44,7 +44,7 @@ public class User {
     public PurchaseLog getPurchaseLog() {
         return purchaseLog;
     }
-    
+
     // Setter for purchaseLog
     public void setPurchaseLog(PurchaseLog purchaseLog) {
         this.purchaseLog = purchaseLog;
