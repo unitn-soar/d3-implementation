@@ -61,9 +61,9 @@ public class Flight {
     /* @brief Returns a string representation of the flight object*/
     public String toString() {
         return "Flight{" +
-                "departureTime=" + departureTime +
-                ", plane=" + plane +
-                ", flightPath=" + flightPath +
+                "\ndepartureTime=" + departureTime +
+                "\nplane=" + plane +
+                "\nflightPath=" + flightPath +
                 '}';
     }
 }

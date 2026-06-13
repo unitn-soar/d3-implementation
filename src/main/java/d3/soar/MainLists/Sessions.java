@@ -36,5 +36,14 @@ public class Sessions {
     public void setSessions(Sessions sessions) {
         this.sessions = sessions.sessions;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for (Session session : sessions) {
+            sb.append(session.toString()).append("\n");
+        }
+        return sb.toString();
+    }
 }
 

@@ -37,5 +37,12 @@ public class Users {
         this.users = users.users;
     }
 
-
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for (User user : users) {
+            sb.append(user.toString()).append("\n");
+        }
+        return sb.toString();
+    }
 }

@@ -88,11 +88,11 @@ public class Ticket {
         /* @brief Returns a string representation of the ticket object*/
     public String toString() {
         return "Ticket{" +
-                "seatClass='" + seatClass + '\'' +
-                ", price=" + price +
-                ", seat=" + seat +
-                ", active=" + active +
-                ", flight=" + flight +
+                "\nseatClass='" + seatClass + '\'' +
+                "\nprice=" + price +
+                "\nseat=" + seat +
+                "\nactive=" + active +
+                "\nflight=" + flight +
                 '}';
     }
 }

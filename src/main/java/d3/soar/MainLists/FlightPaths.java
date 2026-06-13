@@ -37,5 +37,12 @@ public class FlightPaths {
         this.flightPaths = flightPaths.flightPaths;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for (FlightPath flightPath : flightPaths) {
+            sb.append(flightPath.toString()).append("\n");
+        }
+        return sb.toString();
+    }
 }
-

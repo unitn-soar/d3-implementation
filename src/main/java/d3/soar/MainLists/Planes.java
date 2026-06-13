@@ -36,4 +36,13 @@ public class Planes {
     public void setPlanes(Planes planes) {
         this.planes = planes.planes;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for (Plane plane : planes) {
+            sb.append(plane.toString()).append("\n");
+        }
+        return sb.toString();
+    }
 }

@@ -36,5 +36,14 @@ public class Routes {
     public void setRoutes(Routes routes) {
         this.routes = routes.routes;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for (Route route : routes) {
+            sb.append(route.toString()).append("\n");
+        }
+        return sb.toString();
+    }
 }
 

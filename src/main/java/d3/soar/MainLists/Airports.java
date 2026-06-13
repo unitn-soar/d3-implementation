@@ -36,5 +36,14 @@ public class Airports {
     public void setAirports(Airports airports) {
         this.airports = airports.airports;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for (Airport airport : airports) {
+            sb.append(airport.toString()).append("\n");
+        }
+        return sb.toString();
+    }
 }
 

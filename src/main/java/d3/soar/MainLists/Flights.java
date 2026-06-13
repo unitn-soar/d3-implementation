@@ -36,4 +36,13 @@ public class Flights {
     public void setFlights(Flights flights) {
         this.flights = flights.flights;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for (Flight flight : flights) {
+            sb.append(flight.toString()).append("\n");
+        }
+        return sb.toString();
+    }
 }

@@ -36,4 +36,14 @@ public class Tickets {
     public void setTickets(Tickets tickets) {
         this.tickets = tickets.tickets;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for (Ticket ticket : tickets) {
+            sb.append(ticket.toString()).append("\n");
+        }
+        return sb.toString();
+    }
+
 }

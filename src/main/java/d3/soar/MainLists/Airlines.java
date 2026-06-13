@@ -37,4 +37,12 @@ public class Airlines {
         this.airlines = airlines.airlines;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for (Airline airline : airlines) {
+            sb.append(airline.toString()).append("\n");
+        }
+        return sb.toString();
+    }
 }

@@ -72,10 +72,10 @@ public class Purchase {
     /* @brief Returns a string representation of the purchase object*/
     public String toString() {
         return "Purchase{" +
-                "purchaseDate=" + purchaseDate +
-                ", receipt='" + receipt + '\'' +
-                ", ticket=" + ticket +
-                ", passenger=" + passenger +
+                "\npurchaseDate=" + purchaseDate +
+                ",\nreceipt='" + receipt + '\'' +
+                ",\nticket=" + ticket +
+                ",\npassenger=" + passenger +
                 '}';
     }
 }

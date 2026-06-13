@@ -37,5 +37,14 @@ public class TicketPackages {
     public void setTicketPackages(TicketPackages ticketPackages) {
         this.ticketpackages = ticketPackages.ticketpackages;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for (TicketPackage ticketPackage : ticketpackages) {
+            sb.append(ticketPackage.toString()).append("\n");
+        }
+        return sb.toString();
+    }
 }
 

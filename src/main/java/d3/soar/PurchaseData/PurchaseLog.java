@@ -71,7 +71,7 @@ public class PurchaseLog {
     public String toString() {
         return "PurchaseLog{" +
                 "purchases=" + purchases +
-                ", bulkPurchases=" + bulkPurchases +
+                ",\nbulkPurchases=" + bulkPurchases +
                 '}';
     }
 }

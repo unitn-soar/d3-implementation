@@ -35,4 +35,13 @@ public class PurchaseLogs {
     public void setPurchaseLogs(PurchaseLogs purchaseLogs) {
         this.purchaseLogs = purchaseLogs.purchaseLogs;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for (PurchaseLog purchaseLog : purchaseLogs) {
+            sb.append(purchaseLog.toString()).append("\n");
+        }
+        return sb.toString();
+    }
 }
