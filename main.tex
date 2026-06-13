@@ -1,0 +1,101 @@
+\documentclass[12pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage[a4paper,margin=2.5cm]{geometry}
+\usepackage{setspace}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage[hidelinks]{hyperref}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{caption}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{graphicx}
+\usepackage{changes}
+\usepackage{xcolor}
+\usepackage{changepage}
+
+\setstretch{1.15}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.6em}
+
+\definecolor{titleblue}{RGB}{28,48,88}
+
+\titleformat{\section}
+{\Large\bfseries\color{titleblue}}
+{\thesection.}{0.6em}{}
+
+\titleformat{\subsection}
+{\large\bfseries}
+{\thesubsection}{0.6em}{}
+
+\titleformat{\subsubsection}
+{\normalsize\bfseries}
+{\thesubsubsection}{0.6em}{}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{Soar}
+\fancyhead[C]{v0.1}
+\fancyhead[R]{Deliverable 3}
+\fancyfoot[C]{\thepage\ of \pageref{LastPage}}
+\renewcommand{\headrulewidth}{0.4pt}
+
+\captionsetup{
+	font=small,
+	labelfont=bf
+}
+
+\newcommand{\includeactivitydiagram}[1]{%
+	\IfFileExists{#1}{\includegraphics[width=\linewidth]{#1}}{}
+}
+
+\newcommand{\sequencedescription}[1]{%
+	\par\small #1\par\normalsize%
+}
+
+\begin{document}
+	
+	\begin{titlepage}
+		\centering
+		\vspace*{2.4cm}
+		{\Huge\bfseries\color{titleblue} Soar\par}
+		\vspace{0.4cm}
+		{\Large Deliverable 3\par}
+		\vspace{0.4cm}
+		{\large Software Design \par}
+		\vspace{1.6cm}
+		{\large Li Yifeng, Meduri Lorenzo, Pedrotti Filippo, D'Ignazio Donato\par}
+		\vfill
+		{\large Revised on \today\par}
+	\end{titlepage}
+	
+	\tableofcontents
+	\newpage
+	\section{Document Objective}
+		This document aims to give a fully detailed explanation of the functionalities and development of the Soar web application for the purchase and handling of flight tickets. This document will contain the user flows for each of the four different types of user(Person, Travel Agency, Admin and Developer), provide motivations for the choices made during development and give insight in the code's functions, classes, and implementations. In the end, there will be a general team assessment, giving details on how each member of the team contributed to the project
+		
+		
+	\section{Architecture Choice and Language}
+				
+		\subsection{Covered Objectives}
+		\begin{enumerate}[leftmargin=2.2em,label=\textbf{O\arabic*.}]
+			\begin{adjustwidth}{0.4cm}{0cm}
+        		For the development of this application, the team has decided on a three tier architecture. The separation between the front-end, the back-end and the database provides a dynamic structure that allows each type of user to access only the necessary data while letting the back-end be linked to a single database. Moreover this architecture provides a clear separation of tasks, improved security on the database and easier maintenance in case of updates or bug fixing.
+			\end{adjustwidth}
+		\end{enumerate}
+		
+		\subsection{Language Used}
+        		\begin{enumerate}[leftmargin=2.2em,label=\textbf{O\arabic*.}]
+			\begin{adjustwidth}{0.4cm}{0cm}
+                For the program back-end, the language chosen was Java, because it is a versatile language made to handle object oriented programming. Ideally, the program's front end would be a public website (written in HTML), but for the restriction of the project it is implemented as a private CLI.
+			\end{adjustwidth}
+		\end{enumerate}
+
+		
+	
+\end{document}
