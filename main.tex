@@ -96,7 +96,62 @@
                 For the program back-end, the language chosen was Java, because it is a versatile language made to handle object oriented programming, of which the program will make use frequently. Ideally, the program's front end would be a public website, and it would be written in HTML, but given the restriction of the project it is implemented as a private CLI. The code interacts with the database with a set of SQL queries to retrieve pertinent informations.
 			\end{adjustwidth}
 		\end{enumerate}
+        
+    \newpage
+    \section{User Flows}
 
-		
+        In this section of the development document we report "user flows" for every kind of user that can interact with our system, ranging from unregistered users to registered users such as travel agencies, admins and developers. \\
+        The first figure will describe the limited action a unregistered user can carry out such as registration or log in, then the following flows will expand on the actions of registered users, categorized in normal registered user or travel agency flows with actions such as purchasing tickets, admin flows covering their privileges on editing flights data and developer flows interested in backing up data as a fail safe. \\
+        Lastly another figure will be presented to show the common actions that every registered user can conduct while visiting their account information section.
+
+        \subsection{Unregistered User}
+            The following flow covers use cases "5.2 View and Search Flight", "5.3 Account Creation" and "5.4 Access Account" from the previous document and links with (insert class and methods). \\
+            The unregistered user can perform a small number of actions, the main ones being the ability to create a personal account or logging inside their own if already existing while always having the ability to go back and stop the process. \\
+            He can also search and organize lists of flights, however the action is restricted to the act of viewing the results and nothing more as it is required for the user to be registered to perform further actions. \\
+            
+            \subsubsection{Main Flow}
+            
+
+        \subsection{Normal Registered User \& Travel Agencies}
+            Here we present the two flows concerning all actions that can be taken by Users and Travel Agencies after having logged in their account. \\
+            The first flow covers use cases "5.2 View and Search Flight", "5.10 Perform Self Check-In", "5.11 View Purchase History" and introduces the second flow that addresses use cases "5.9 Purchase Ticket", "5.12 Purchase Tickets in Bulk" and "5.8 Send Notification", moreover it links with (insert class and methods). \\
+            First of all, the interested user can now select a flight after the research and actually follow the procedure to purchase one or more tickets while still having the possibility to go back and choose a more appropriate flight, they will be asked to provide various information including a valid payment method. When the action is completed the system will take care of sending a notification of the user about the successful purchase. \\
+            Other than that the user will also be able to carry out self check-in on tickets that respect the window for it or view the purchases that have been done in the past on the account. \\
+            Lastly any user that has accessed on the site will have the opportunity to access its account page where more function are available, that will be addressed in a later user flow common to any registered user. \\
+            
+            \subsubsection{Main Flow}
+            
+            
+            \subsubsection{Ticket Purchase Extension Flow}
+            
+
+		\subsection{Admin}
+            The admin flow covers use cases "5.13 Edit Flights Data" and "5.14 Data Analysis" from the second document and links with (insert class and methods). \\ 
+            Admins have different authorizations from standard users that allow the firstly to edit or add flights to the database of our software. From the appropriate window they will be given the choice to either add a new flight, comprehensive of destination and departure, duration of flight and distance in kilometers, check-in windows and number of seats per class, or modify an existing one and if necessary even deleting one. \\
+            The other function exclusive of admins is the ability to analyze collected data from users, allowing them to mold the database to better fit passenger needs. \\
+            Again, a special page dedicated to account information can be accessed and will be shown later in the document. \\
+
+            \subsubsection{Main Flow}
+
+
+            \subsubsection{Edit Flight Data Extension Flow}
+
+
+        \subsection{Developers}
+            The user flow for developers only covers the use case "5.15 Backup Creation" from the D2 document and links with (insert class and methods). \\
+            When choosing to perform a backup developers will be show the most recent backup in beforehand so they know whether or not a backup is strictly necessary. If they decide to create a new one they will be prompted to confirm the creation of the new backup followed by the deletion of the older one after the action successfully goes through. \\
+            Once more, developers can access their account page that will be discussed later. \\
+
+            \subsubsection{Main Flow}
+
+
+        \subsection{Common Flow - Account Information Page}
+            The following user flow addresses use cases "5.5 Update Information", "5.6 Delete Account" and "5.7 Change Password" from the previous document and links with (insert class and methods). \\
+            Any user that accesses this page can carry out these actions: update their profile's information such as email, changing the account's password and if necessary even deleting the profile. One can always change his mind and stop the action mid way through to avoid unnecessary modifications. \\
+            User will also be able to go back to the homepage after they are done visiting the account information page. \\
+
+            \subsubsection{Account Page Flow}
+
+            
 	
 \end{document}
