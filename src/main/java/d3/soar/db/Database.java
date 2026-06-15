@@ -6,6 +6,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.format.DateTimeFormatter;
+
 public class Database {
     private static Connection connection;
 
@@ -67,13 +69,14 @@ public class Database {
             }
             ResultSet result = ps.executeQuery();
             StringBuilder out = new StringBuilder();
+            DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
             while (result.next()) {
                 out.append(result.getLong("flight_id")).append(" | ")
                         .append(result.getString("departure_airport")).append(" -> ")
                         .append(result.getString("destination_airport")).append(" | ")
                         .append(result.getString("airline_name")).append(" | ")
-                        .append(result.getTimestamp("departure_time")).append(" -> ")
-                        .append(result.getTimestamp("arrival_time")).append(" | ")
+                        .append(result.getTimestamp("departure_time").toLocalDateTime().format(fmt)).append(" -> ")
+                        .append(result.getTimestamp("arrival_time").toLocalDateTime().format(fmt)).append(" | ")
                         .append(result.getInt("duration_minutes")).append(" min | ")
                         .append(result.getBigDecimal("lowest_price")).append("€ | ")
                         .append(result.getLong("available_seats")).append(" seats\n");
@@ -84,6 +87,26 @@ public class Database {
             return "";
         }
     }
+    public static long check_credentials(String email, String password_hash){
+        try {
+            PreparedStatement ps = getConnection().prepareStatement("SELECT * FROM check_credentials(?, ?)");
+            ps.setString(1, email);
+            ps.setString(2, password_hash);
+            ResultSet result = ps.executeQuery();
+            result.next();
+            long user_id = result.getLong("check_credentials");
+            if (result.wasNull()){
+                return -1;
+            }else{
+                return user_id;
+            }
+
+        } catch (Exception e){
+            System.out.println("Error: " + e.toString());
+            return -1;
+        }
+    }
+
 
     ///@brief Creates a premade database
     /// @details Inserts into the database a premade set of airlines, airports, flights and people

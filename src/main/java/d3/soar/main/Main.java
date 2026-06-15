@@ -2,6 +2,7 @@ package d3.soar.main;
 
 import java.util.Scanner;
 
+import d3.soar.sessions.Session;
 import org.mindrot.jbcrypt.BCrypt;
 
 import d3.soar.db.Database;
@@ -12,18 +13,22 @@ public class Main {
         System.out.println("Type 'help' to get the command list");
         //Database.populate_test_data();
 
+        main_loop:
         while (true) {
             Scanner scanner = new Scanner(System.in);
             System.out.print("> ");
             switch (Command.fromString(scanner.nextLine())) {
                 case HELP -> System.out.print(Command.help());
+                case EXIT -> {
+                    break main_loop;
+                }
                 case INVALID -> System.out.println("Invalid command, type 'help' to see the command list");
                 case REGISTER -> {
                     System.out.print("email: ");
                     String email = scanner.nextLine().strip();
                     System.out.print("password: ");
                     String password = scanner.nextLine().strip();
-                    Database.register_user(email, BCrypt.hashpw(password, BCrypt.gensalt()));
+                    Database.register_user(email, BCrypt.hashpw(password, "$2a$12$R9h/cIPz0gi.URNNX3kh2O")); // A joke
                 }
                 
                 case SEARCH_FLIGHT -> {
@@ -40,6 +45,22 @@ public class Main {
                         date = java.sql.Date.valueOf(java.time.LocalDate.now());
                     }
                     System.out.println("Flights:\n" + Database.search_direct_flights(id, date));
+                }
+                case LOGIN -> {
+                    System.out.print("email: ");
+                    String email = scanner.nextLine().trim();
+                    System.out.print("password: ");
+                    String password = scanner.nextLine().trim();
+                    long user_id = Database.check_credentials(email, BCrypt.hashpw(password, "$2a$12$R9h/cIPz0gi.URNNX3kh2O"));
+                    if (user_id == -1){
+                        System.out.println("Invalid credentials");
+                    }else{
+                        Session.setUser_id(user_id);
+                        System.out.println("Successfully logged-in");
+                    }
+                }
+                case LOGOUT -> {
+                    Session.logout();
                 }
             }
         }
