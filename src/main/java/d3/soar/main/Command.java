@@ -9,6 +9,7 @@ public enum Command {
     EXIT,
     INVALID;
 
+    ///@brief Returns the corresponding Command
     public static Command fromString(String input){
         try{
             return valueOf(input.trim().toUpperCase());
@@ -16,6 +17,8 @@ public enum Command {
             return INVALID;
         }
     }
+
+    ///@brief Prints out all available commands
     public static String help(){
         StringBuilder out = new StringBuilder();
         for(Command cmd: Command.values()){

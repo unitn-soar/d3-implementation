@@ -1,8 +1,15 @@
 package d3.soar.db;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 public class Database {
     private static Connection connection;
 
+    ///@brief Creates a connection with a Database
     private static Connection getConnection() throws SQLException{
         if (connection == null) {
             connection = DriverManager.getConnection(
@@ -12,6 +19,8 @@ public class Database {
         }
         return connection;
     }
+
+    ///@brief Creates a new user and stores it in the database
     public static void register_user(String email, String password_hash){
         try {
             PreparedStatement ps = getConnection().prepareStatement("SELECT create_person_account(?, ?)");
@@ -22,6 +31,9 @@ public class Database {
             System.out.println("Error: " + e.toString());
         }
     }
+
+    ///@brief Returns a list of all existing airports
+    /// @returns All existing airports and relative informations as a string
     public static String airport_list(){
         try {
             PreparedStatement ps = getConnection().prepareStatement("SELECT * FROM get_airports()");
@@ -37,6 +49,11 @@ public class Database {
             return "";
         }
     }
+
+    ///@brief Finds direct flights to a given destination and a date
+    /// @param destination The destination airport
+    /// @param date The date of the flight
+    /// @return A string containing informations about all available flights
     public static String search_direct_flights(int destination, Date date) {
         try {
             PreparedStatement ps = getConnection().prepareStatement(
@@ -67,6 +84,9 @@ public class Database {
             return "";
         }
     }
+
+    ///@brief Creates a premade database
+    /// @details Inserts into the database a premade set of airlines, airports, flights and people
     public static void populate_test_data() {
         try {
             Connection conn = getConnection();

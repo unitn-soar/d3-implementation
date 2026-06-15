@@ -1,9 +1,10 @@
 package d3.soar.main;
 
-import d3.soar.db.Database;
+import java.util.Scanner;
+
 import org.mindrot.jbcrypt.BCrypt;
 
-import java.util.Scanner;
+import d3.soar.db.Database;
 
 public class Main {
     void main(String[] args) {
@@ -24,6 +25,7 @@ public class Main {
                     String password = scanner.nextLine().strip();
                     Database.register_user(email, BCrypt.hashpw(password, BCrypt.gensalt()));
                 }
+                
                 case SEARCH_FLIGHT -> {
                     System.out.println("Here are all possible destinations:\n" + Database.airport_list());
                     System.out.print("Destination (id/-1 for any): ");
