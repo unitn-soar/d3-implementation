@@ -64,7 +64,55 @@ AS $$
         CASE WHEN p_sort_by = 'DEPARTURE_TIME' THEN f.departure_time END ASC,
         f.departure_time ASC
 $$;
-
+CREATE OR REPLACE FUNCTION get_pending_checkins(
+    p_user_id BIGINT
+)
+RETURNS TABLE (
+    ticket_id           BIGINT,
+    flight_id           BIGINT,
+    departure_airport   VARCHAR,
+    destination_airport VARCHAR,
+    airline_name        VARCHAR,
+    departure_time      TIMESTAMPTZ,
+    seat_class          VARCHAR,
+    seat_number         INTEGER,
+    passenger_name      VARCHAR,
+    passenger_surname   VARCHAR,
+    check_in_open_at    TIMESTAMPTZ,
+    check_in_close_at   TIMESTAMPTZ
+)
+LANGUAGE sql
+AS $$
+    SELECT
+        t.ticket_id,
+        f.flight_id,
+        dep.airport_name,
+        dst.airport_name,
+        al.airline_name,
+        f.departure_time,
+        fs.seat_class,
+        fs.seat_number,
+        ps.name,
+        ps.surname,
+        COALESCE(f.check_in_open_at,  f.departure_time - INTERVAL '24 hours'),
+        COALESCE(f.check_in_close_at, f.departure_time - INTERVAL '2 hours')
+    FROM tickets t
+    JOIN purchases p       ON p.purchase_id     = t.purchase_id
+    JOIN passengers ps     ON ps.passenger_id   = t.passenger_id
+    JOIN flight_seats fs   ON fs.flight_seat_id = t.flight_seat_id
+    JOIN flights f         ON f.flight_id       = fs.flight_id
+    JOIN flight_paths fp   ON fp.flight_path_id = f.flight_path_id
+    JOIN airports dep      ON dep.airport_id    = fp.departure_airport_id
+    JOIN airports dst      ON dst.airport_id    = fp.destination_airport_id
+    JOIN planes pl         ON pl.plane_id       = f.plane_id
+    JOIN airlines al       ON al.airline_id     = pl.airline_id
+    WHERE t.ticket_status = 'ISSUED'
+      AND f.status IN ('SCHEDULED', 'DELAYED')
+      AND NOW() BETWEEN COALESCE(f.check_in_open_at,  f.departure_time - INTERVAL '24 hours')
+                    AND COALESCE(f.check_in_close_at, f.departure_time - INTERVAL '2 hours')
+      AND (p.buyer_user_id = p_user_id OR ps.user_id = p_user_id)
+    ORDER BY f.departure_time;
+$$;
 CREATE OR REPLACE FUNCTION search_one_stop_routes(
     p_departure_airport_id BIGINT,
     p_destination_airport_id BIGINT,

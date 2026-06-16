@@ -27,6 +27,32 @@ public class Database {
             System.out.println("Error: " + e.toString());
         }
     }
+    public static String get_pending_checkins(long user_id) {
+        try {
+            PreparedStatement ps = getConnection().prepareStatement("SELECT * FROM get_pending_checkins(?)");
+            ps.setLong(1, user_id);
+            ResultSet result = ps.executeQuery();
+            StringBuilder out = new StringBuilder();
+            DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+            while (result.next()) {
+                out.append("Ticket #").append(result.getLong("ticket_id"))
+                        .append(" | ").append(result.getString("departure_airport"))
+                        .append(" -> ").append(result.getString("destination_airport"))
+                        .append(" | ").append(result.getString("airline_name"))
+                        .append(" | Departure: ").append(result.getTimestamp("departure_time").toLocalDateTime().format(fmt))
+                        .append(" | ").append(result.getString("seat_class"))
+                        .append(" seat ").append(result.getInt("seat_number"))
+                        .append(" | ").append(result.getString("passenger_name"))
+                        .append(" ").append(result.getString("passenger_surname"))
+                        .append(" | Check-in closes: ").append(result.getTimestamp("check_in_close_at").toLocalDateTime().format(fmt))
+                        .append("\n");
+            }
+            return out.toString();
+        } catch (Exception e) {
+            System.out.println("Error: " + e.toString());
+            return "";
+        }
+    }
 
     ///@brief Returns a list of all existing airports
     /// @returns All existing airports and relative informations as a string
@@ -100,6 +126,48 @@ public class Database {
             return -1;
         }
     }
+    public static String get_purchase_history(long user_id) {
+        try {
+            PreparedStatement ps = getConnection().prepareStatement("SELECT * FROM get_purchase_history(?)");
+            ps.setLong(1, user_id);
+            ResultSet result = ps.executeQuery();
+            StringBuilder out = new StringBuilder();
+            DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+            while (result.next()) {
+                out.append("Purchase #").append(result.getLong("purchase_id"))
+                        .append(" | ").append(result.getString("purchase_type"))
+                        .append(" | ").append(result.getString("purchase_status"))
+                        .append(" | €").append(result.getBigDecimal("final_amount"))
+                        .append("\n  Ticket #").append(result.getLong("ticket_id"))
+                        .append(" | ").append(result.getString("ticket_status"))
+                        .append(" | ").append(result.getString("passenger_name"))
+                        .append(" ").append(result.getString("passenger_surname"))
+                        .append(" | ").append(result.getString("departure_airport"))
+                        .append(" -> ").append(result.getString("destination_airport"))
+                        .append(" | ").append(result.getTimestamp("departure_time").toLocalDateTime().format(fmt))
+                        .append(" | ").append(result.getString("seat_class"))
+                        .append(" seat ").append(result.getInt("seat_number"))
+                        .append(" | €").append(result.getBigDecimal("ticket_price"))
+                        .append("\n");
+            }
+            return out.toString();
+        } catch (Exception e) {
+            System.out.println("Error: " + e.toString());
+            return "";
+        }
+    }
+
+    public static void self_check_in(long user_id, long ticket_id){
+        try {
+            PreparedStatement ps = getConnection().prepareStatement("SELECT * FROM self_check_in(?, ?)");
+            ps.setLong(1, user_id);
+            ps.setLong(2, ticket_id);
+            ps.executeQuery();
+        } catch (Exception e) {
+            System.out.println("Error: " + e.toString());
+        }
+    }
+
     public static void change_email(long user_id, String new_email){
         try {
             PreparedStatement ps = getConnection().prepareStatement("SELECT * FROM change_email(?, ?)");

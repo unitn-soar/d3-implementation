@@ -38,6 +38,24 @@ public class Main {
                         Database.register_user(email, BCrypt.hashpw(password, Session.getSalt())); // A joke
                     }
                 }
+                case PURCHASE_HISTORY -> {
+                    if (Session.getUser_id() != -1) {
+                        System.out.println(Database.get_purchase_history(Session.getUser_id()));
+                    }else{
+                        System.out.println("You must be logged-in to see your purchase history!");
+                    }
+                }
+                case SELF_CHECK_IN -> {
+                    if (Session.getUser_id() != -1) {
+                        System.out.println(Database.get_pending_checkins(Session.getUser_id()));
+                        System.out.println("Ticket id: ");
+                        long ticket_id = Long.parseLong(scanner.nextLine().trim());
+                        Database.self_check_in(Session.getUser_id(), ticket_id);
+                        System.out.println("Ticket checked-in successfully!");
+                    }else{
+                        System.out.println("You must be logged-in to self check-in!");
+                    }
+                }
                 case DELETE_ACCOUNT -> {
                     if (Session.getUser_id() != -1){
                         System.out.print("Are you sure you want to delete your account (y/n)? ");

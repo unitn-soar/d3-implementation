@@ -11,6 +11,7 @@ public enum Command {
     EDIT_ACCOUNT,
     DELETE_ACCOUNT,
     CHANGE_PASSWORD,
+    PURCHASE_HISTORY,
     SELF_CHECK_IN;
 
     ///@brief Returns the corresponding Command
