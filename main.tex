@@ -226,7 +226,39 @@
 
             \subsubsection{Account Page Flow}
             \includegraphics[width=\linewidth]{./diagrams/user_flows/account_page.png}
+	
+	\newpage
+	\section{Project Structure}
+		The project structure is divided in the following java packets:
+		Note that only main, db and sessions are used in the implementation and the others show that the class structure from the class diagram works. \\
+		\includegraphics[width=\linewidth]{./diagrams/structure/structure.png}
+		
+		\subsection{Main functions}
+			\subsubsection{Register user}
+				\textbf{Creates a new user and stores it in the database. Use case: 5.3} \\ \\
+				\includegraphics[width=\linewidth]{./diagrams/structure/register_user.png}
+				
+			\subsubsection{Search direct flights}
+				\textbf{Finds direct flights to a given destination with a specified date. Use case: 5.2} \\ \\
+				\includegraphics[width=\linewidth]{./diagrams/structure/search_direct_flights.png}
 
+			\subsubsection{Self check in}
+			\textbf{Performs the self check in for the given user and ticket. Use case: 5.10} \\ \\
+			\includegraphics[width=\linewidth]{./diagrams/structure/self_check_in.png}
+    		
+    		\subsubsection{Check credentials}
+    		\textbf{Checks the vailidity of the given credentials. Use case: 5.4} \\ \\
+    		\includegraphics[width=\linewidth]{./diagrams/structure/check_credentials.png}
+	
+			\newpage    		
+    		\subsubsection{Purchase history}
+			\textbf{Retreives the user purchase history from the db. Use case: 5.11} \\ \\
+			\includegraphics[width=\linewidth]{./diagrams/structure/purchase_history.png}
+			
+			\newpage
+			\subsubsection{Buy ticket}
+			\textbf{Creates the purchase entry in the database. Use case: 5.9/5.12} \\ \\
+			\includegraphics[width=\linewidth]{./diagrams/structure/buy_ticket.png}
     \newpage
     
     \section{Team Roles} 
