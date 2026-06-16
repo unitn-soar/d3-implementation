@@ -69,7 +69,7 @@
 		\vspace{0.4cm}
 		{\large Software Design \par}
 		\vspace{1.6cm}
-		{\large Li Yifeng, Meduri Lorenzo, Pedrotti Filippo, D'Ignazio Donato\par}
+		{\large D'Ignazio Donato, Li Yifeng, Meduri Lorenzo, Pedrotti Filippo\par}
 		\vfill
 		{\large Revised on \today\par}
 	\end{titlepage}
@@ -77,27 +77,83 @@
 	\tableofcontents
 	\newpage
 	\section{Document Objective}
-		This document aims to give a fully detailed explanation of the functionalities and development of the Soar web application for the purchase and handling of flight tickets. This document will contain the user flows for each of the four different types of user(Person, Travel Agency, Admin and Developer), provide motivations for the choices made during development and give insight in the code's functions, classes, and implementations. In the end, there will be a general team assessment, giving details on how each member of the team contributed to the project
-		
-		
+		This document aims to give a fully detailed explanation of the functionalities implemented in the Soar web software for the purpose of purchasing and handling of flight tickets. This document provides motivations for choosing Java as our programming language and a PostgreSQL database to retrieve data during development. It will contain the user flows for each of the four different types of users (Standard User, Travel Agency, Admin and Developer) but only cover the implementation of operations that can be carried out by Standard Users or Travel Agencies. Additionally, it will also give some insight in the code's functions, classes, and implementations. The document is concluded with a section for the GitHub Repository Information and a general team assessment, giving details on how each member of the team contributed to the project as a whole.
+
+    \section{D2 Changes}
+
+        \subsection{Use Cases}
+
+            \subsubsection{Update Information}
+
+            \begin{tabular}{|p{4cm}|p{10cm}|}
+                    \hline
+                    \textbf{Use case} & Update Information. \\ \hline
+                    \textbf{Release (id)} & 15/05/2026 - 1.0 \\ \hline
+                    \textbf{Context of Use} & A user logged in wants to change his account information. \\ \hline
+                    \textbf{Scope} & Each user/travel agency that is currently logged in has the possibility of editing their account information such as email \deleted{and password}. \\ \hline
+                    \textbf{Level} & Primary task \\ \hline
+                    \textbf{Primary actor} & Registered User. \\ \hline
+                    
+                    \multirow{2}{4cm}{\textbf{Stakeholder \& interest}} 
+                    & Registered User --- Their interest is changing information about their account that may be outdated \\ \cline{2-2}
+                    
+                    \textbf{Preconditions} & The user has to have an account and be currently logged in. \\ \hline
+                    \textbf{Minimal Guarantees} & The user's personal information are not lost either way and if the action fails the old data will be rolled back. \\ \hline
+                    \textbf{Success Guarantees} & The user's personal information will be updated with the new data inserted. \\ \hline
+                    \textbf{Trigger} & User wanting to change his account's data \\ \hline
+                    
+                    \multicolumn{2}{|l|}{\textbf{Description (Main Success Scenario)}} \\ \hline
+                    \textbf{Step} & \textbf{Action} \\ \hline
+                    1 & Insert new information \\ \hline
+                    2 & Confirm changes \\ \hline
+                    
+                    \multicolumn{2}{|l|}{\textbf{Extension}} \\ \hline
+                    \textbf{Step} & \textbf{Variation and Consequent Action} \\ \hline
+                    2a.1 & The inserted data may be invalid \\ \hline
+                    2a.2 & The user is asked to insert the new information again  \\ \hline
+                    2a.3 & After 3 attempts, if the user hasn't provided valid data he will be brought back to the previous section \\ \hline
+                    2b.1 & The user may decide to don't change any information \\ \hline
+                    2b.2 & The user can choose to cancel the operation and keep the current information \\ \hline 
+                    
+					\multicolumn{2}{|l|}{\textbf{Link to FRs and NFRs}} \\ \hline
+					\multicolumn{2}{|p{14cm}|}{The use case covers FRs 6.3 and 17.3 and has to try to respect NFRs 5 and 8} \\ \hline             
+                \end{tabular}
+
+        \subsection{Class Diagram}
+        
+        
+    \newpage
+        
 	\section{Architecture Choice and Language}
 				
 		\subsection{Covered Objectives}
-		\begin{enumerate}[leftmargin=2.2em,label=\textbf{O\arabic*.}]
-			\begin{adjustwidth}{0.4cm}{0cm}
-        		For the development of this application, the team has decided on a three tier architecture. This type of architecture provides separate functionalities for each type of user, that interact with a single back-end program that manages the various interactions with the system. The program then interacts with a separate database, containing informations related to users, flights and purchases. This architecture provides a clear separation of tasks, thus improving security on the database and making maintenance easier in case of updates or bug fixing.
+        	For the development of this application, the team has decided on a three tier architecture. This type of architecture provides separate functionalities for each type of user, that interact with a single back-end program that manages the various interactions with the system. The program then interacts with a separate database, containing informations related to users, flights and purchases. This architecture provides a clear separation of tasks, thus improving security on the database and making maintenance easier in case of updates or bug fixing.
                 
-			\end{adjustwidth}
-		\end{enumerate}
 		
 		\subsection{Language Used}
-        		\begin{enumerate}[leftmargin=2.2em,label=\textbf{O\arabic*.}]
-			\begin{adjustwidth}{0.4cm}{0cm}
-                For the program back-end, the language chosen was Java, because it is a versatile language made to handle object oriented programming, of which the program will make use frequently. Ideally, the program's front end would be a public website, and it would be written in HTML, but given the restriction of the project it is implemented as a private CLI. The code interacts with the database with a set of SQL queries to retrieve pertinent informations.
-			\end{adjustwidth}
-		\end{enumerate}
+            For the program back-end, the language chosen was Java, because it is a versatile language made to handle object oriented programming, of which the program will make use frequently. Ideally, the program's front end would be a public website, and it would be written in HTML, but given the restriction of the project it is implemented as a private CLI. The code interacts with the database with a set of SQL queries to retrieve pertinent information.
+
+        \subsection{Database}
+            To manage the various entries of users, flights and such we developed a PostgreSQL database with the following schema with 3 main tables being:
+            \begin{enumerate}
+                \item Users
+                \item Tickets
+                \item Flights
+            \end{enumerate}
+
+            The 3 main tables have the following attributes and specifications:
+
+            Here is an example of entries of the Users table:
+        
+        \subsection{Dependencies}
+            List ot the dependencies used in the implementation: 
+            \begin{enumerate}
+                \item Bcrypt 
+                \item java.sql 
+            \end{enumerate}
         
     \newpage
+    
     \section{User Flows}
 
         In this section of the development document we report "user flows" for every kind of user that can interact with our system, ranging from unregistered users to registered users such as travel agencies, admins and developers. \\
@@ -152,6 +208,29 @@
 
             \subsubsection{Account Page Flow}
 
-            
+    \newpage
+    
+    \section{Team Roles} 
+
+        \subsection{Roles and Activities}
+            \begin{tabular}{|c|p{10cm}|}
+                \hline
+                Team Member & Main Activities   \\ \hline
+                D'Ignazio Donato &  Worked on functional requirements on D1, designed class diagram in D2, worked on doxygen documentation, classes, architecture and language descriptions and in D3 \\ \hline
+                Li Yifeng & Designed sequence diagrams in D2 and developed database with queries and functions in D3 \\ \hline
+                Meduri Lorenzo & Worked on stakeholders, functional and non functional requirements in D1, designed activity diagrams and reviewed D1 in D2, developed actual program implementation in D3 \\ \hline
+                Pedrotti Filippo & Worked on stakeholders, functional and non functional requirements in D1, wrote use case descriptions and designed use case diagram in D2, designed user flows and wrote user flows descriptions in D3  \\ \hline    
+            \end{tabular}
+
+        \subsection{Workload Distribution}
+            \begin{tabular}{|c|c|c|c|c|}
+                \hline
+                & D'Ignazio Donato & Li Yifeng & Meduri Lorenzo & Pedrotti Filippo \\ \hline
+                D1 & 10\% & 5\% & 45\% & 40\% \\ \hline
+                D2 & 20\% & 15\% & 30\% & 35\% \\ \hline
+                D3 & 25\% & 25\% & 25\% & 25\% \\ \hline
+   
+            \end{tabular}
+
 	
 \end{document}
