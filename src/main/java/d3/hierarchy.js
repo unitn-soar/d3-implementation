@@ -1,0 +1,37 @@
+var hierarchy =
+[
+    [ "d3.soar.FlightData.Airline", "classd3_1_1soar_1_1_flight_data_1_1_airline.html", null ],
+    [ "d3.soar.MainLists.Airlines", "classd3_1_1soar_1_1_main_lists_1_1_airlines.html", null ],
+    [ "d3.soar.FlightData.Airport", "classd3_1_1soar_1_1_flight_data_1_1_airport.html", null ],
+    [ "d3.soar.MainLists.Airports", "classd3_1_1soar_1_1_main_lists_1_1_airports.html", null ],
+    [ "d3.soar.PurchaseData.BulkPurchase", "classd3_1_1soar_1_1_purchase_data_1_1_bulk_purchase.html", null ],
+    [ "d3.soar.main.Command", "enumd3_1_1soar_1_1main_1_1_command.html", null ],
+    [ "d3.soar.db.Database", "classd3_1_1soar_1_1db_1_1_database.html", null ],
+    [ "d3.soar.FlightData.Flight", "classd3_1_1soar_1_1_flight_data_1_1_flight.html", null ],
+    [ "d3.soar.FlightData.FlightPath", "classd3_1_1soar_1_1_flight_data_1_1_flight_path.html", null ],
+    [ "d3.soar.MainLists.FlightPaths", "classd3_1_1soar_1_1_main_lists_1_1_flight_paths.html", null ],
+    [ "d3.soar.MainLists.Flights", "classd3_1_1soar_1_1_main_lists_1_1_flights.html", null ],
+    [ "d3.soar.main.Main", "classd3_1_1soar_1_1main_1_1_main.html", null ],
+    [ "d3.soar.PurchaseData.Passenger", "classd3_1_1soar_1_1_purchase_data_1_1_passenger.html", null ],
+    [ "d3.soar.FlightData.Plane", "classd3_1_1soar_1_1_flight_data_1_1_plane.html", null ],
+    [ "d3.soar.MainLists.Planes", "classd3_1_1soar_1_1_main_lists_1_1_planes.html", null ],
+    [ "d3.soar.PurchaseData.Purchase", "classd3_1_1soar_1_1_purchase_data_1_1_purchase.html", null ],
+    [ "d3.soar.PurchaseData.PurchaseLog", "classd3_1_1soar_1_1_purchase_data_1_1_purchase_log.html", null ],
+    [ "d3.soar.MainLists.PurchaseLogs", "classd3_1_1soar_1_1_main_lists_1_1_purchase_logs.html", null ],
+    [ "d3.soar.PurchaseData.Route", "classd3_1_1soar_1_1_purchase_data_1_1_route.html", null ],
+    [ "d3.soar.MainLists.Routes", "classd3_1_1soar_1_1_main_lists_1_1_routes.html", null ],
+    [ "d3.soar.sessions.Session", "classd3_1_1soar_1_1sessions_1_1_session.html", null ],
+    [ "d3.soar.UserData.Session", "classd3_1_1soar_1_1_user_data_1_1_session.html", null ],
+    [ "d3.soar.MainLists.Sessions", "classd3_1_1soar_1_1_main_lists_1_1_sessions.html", null ],
+    [ "d3.soar.PurchaseData.Ticket", "classd3_1_1soar_1_1_purchase_data_1_1_ticket.html", null ],
+    [ "d3.soar.PurchaseData.TicketPackage", "classd3_1_1soar_1_1_purchase_data_1_1_ticket_package.html", null ],
+    [ "d3.soar.MainLists.TicketPackages", "classd3_1_1soar_1_1_main_lists_1_1_ticket_packages.html", null ],
+    [ "d3.soar.MainLists.Tickets", "classd3_1_1soar_1_1_main_lists_1_1_tickets.html", null ],
+    [ "d3.soar.UserData.User", "classd3_1_1soar_1_1_user_data_1_1_user.html", [
+      [ "d3.soar.UserData.Admin", "classd3_1_1soar_1_1_user_data_1_1_admin.html", null ],
+      [ "d3.soar.UserData.Developer", "classd3_1_1soar_1_1_user_data_1_1_developer.html", null ],
+      [ "d3.soar.UserData.Person", "classd3_1_1soar_1_1_user_data_1_1_person.html", null ],
+      [ "d3.soar.UserData.TravelAgency", "classd3_1_1soar_1_1_user_data_1_1_travel_agency.html", null ]
+    ] ],
+    [ "d3.soar.MainLists.Users", "classd3_1_1soar_1_1_main_lists_1_1_users.html", null ]
+];
