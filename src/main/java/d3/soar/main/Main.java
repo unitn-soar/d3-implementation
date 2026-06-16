@@ -97,7 +97,7 @@ public class Main {
                 }
                 case SEARCH_FLIGHT -> {
                     System.out.println("Here are all possible destinations:\n" + Database.airport_list());
-                    System.out.print("Destination (id/-1 for any): ");
+                    System.out.print("Destination (id): ");
                     int id = Integer.parseInt(scanner.nextLine().trim());
                     System.out.print("Do you want to specify a date (y/n)? ");
                     String choice = scanner.nextLine().trim();
