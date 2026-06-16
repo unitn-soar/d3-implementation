@@ -133,8 +133,7 @@ CREATE TABLE payments (
     amount NUMERIC(10, 2) NOT NULL CHECK (amount >= 0),
     currency CHAR(3) NOT NULL DEFAULT 'EUR',
     payment_status VARCHAR(20) NOT NULL CHECK (payment_status IN ('AUTHORIZED', 'CAPTURED', 'FAILED', 'REFUNDED')),
-    paid_at TIMESTAMPTZ,
-    CONSTRAINT uq_payments_external_ref UNIQUE (external_payment_ref)
+    paid_at TIMESTAMPTZ
 );
 
 CREATE TABLE tickets (

@@ -13,7 +13,7 @@ public class Main {
     void main(String[] args) {
         System.out.println("Welcome to Soar! Your flight app");
         System.out.println("Type 'help' to get the command list");
-        Database.populate_test_data();
+        //Database.populate_test_data();
 
         main_loop:
         while (true) {
@@ -35,7 +35,7 @@ public class Main {
                     String choice = scanner.nextLine().trim();
 
                     if (choice.equals("y")) {
-                        Database.register_user(email, BCrypt.hashpw(password, Session.getSalt())); // A joke
+                        Database.register_user(email, BCrypt.hashpw(password, Session.getSalt()));
                     }
                 }
                 case PURCHASE_HISTORY -> {
@@ -47,8 +47,13 @@ public class Main {
                 }
                 case SELF_CHECK_IN -> {
                     if (Session.getUser_id() != -1) {
-                        System.out.println(Database.get_pending_checkins(Session.getUser_id()));
-                        System.out.println("Ticket id: ");
+                        String out = Database.get_pending_checkins(Session.getUser_id());
+                        if (out.equals("")){
+                            System.out.println("No tickets to check-in!");
+                            continue;
+                        }
+                        System.out.println(out);
+                        System.out.print("Ticket id: ");
                         long ticket_id = Long.parseLong(scanner.nextLine().trim());
                         Database.self_check_in(Session.getUser_id(), ticket_id);
                         System.out.println("Ticket checked-in successfully!");
@@ -84,7 +89,7 @@ public class Main {
                     if (Session.getUser_id() != -1){
                         System.out.print("New email: ");
                         String new_email = scanner.nextLine().trim();
-                        Database.change_password(Session.getUser_id(), new_email);
+                        Database.change_email(Session.getUser_id(), new_email);
                         System.out.println("Email changed successfully!");
                     }else{
                         System.out.println("You must be logged-in to change your email!");
@@ -101,12 +106,12 @@ public class Main {
                         System.out.print("Date (YYYY-MM-DD): ");
                         date = java.sql.Date.valueOf(scanner.nextLine().trim());
                     }else{
-                        date = java.sql.Date.valueOf(java.time.LocalDate.now());
+                        date = null;
                     }
                     System.out.println("Flights:\n" + Database.search_direct_flights(id, date));
 
-                    if (Session.getUser_id() != 1){
-                        System.out.print("Do you want to buy a flight (y/n)?");
+                    if (Session.getUser_id() != -1){
+                        System.out.print("Do you want to buy a flight (y/n)? ");
                         String choice2 = scanner.nextLine().trim();
                         if(choice2.equals("y")){
                             System.out.print("Ticket to buy (id): ");
@@ -121,10 +126,14 @@ public class Main {
                             System.out.print("Date of birth (YYYY-MM-DD): ");
                             date = java.sql.Date.valueOf(scanner.nextLine().trim());
 
+                            System.out.print("Seat number: ");
+                            int seat = Integer.parseInt(scanner.nextLine().trim());
 
-
-                            Database.buy_ticket(Session.getUser_id(), Session.getUser_id(), name, surname,Session.getEmail(), date, 1, "Provider", "");
-                            System.out.println("Ticket successfully bought!");
+                            if(Database.buy_ticket(Session.getUser_id(), Session.getUser_id(), name, surname,Session.getEmail(), date, seat, "Provider", "")){
+                                System.out.println("Ticket successfully bought!");
+                            }else{
+                                System.out.println("The selected seat is already taken!");
+                            }
                         }
                     }else{
                         System.out.println("You need to be logged-in to buy a ticket");
@@ -144,7 +153,12 @@ public class Main {
                     }
                 }
                 case LOGOUT -> {
-                    Session.logout();
+                    if(Session.getUser_id() != -1) {
+                        Session.logout();
+                        System.out.println("Successfully logged-out!");
+                    }else{
+                        System.out.println("You're not even logged-in!");
+                    }
                 }
             }
         }

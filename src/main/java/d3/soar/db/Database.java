@@ -27,6 +27,8 @@ public class Database {
             System.out.println("Error: " + e.toString());
         }
     }
+    ///@brief Gets user tickets that needs a check-in
+    /// @returns a list of tickets waiting to be checked-in
     public static String get_pending_checkins(long user_id) {
         try {
             PreparedStatement ps = getConnection().prepareStatement("SELECT * FROM get_pending_checkins(?)");
@@ -108,6 +110,8 @@ public class Database {
             return "";
         }
     }
+    /// @brief checks the vailidity of the given credentials
+    /// @returns true or false based on their validity
     public static long check_credentials(String email, String password_hash){
         try {
             PreparedStatement ps = getConnection().prepareStatement("SELECT * FROM check_credentials(?, ?)");
@@ -127,6 +131,8 @@ public class Database {
             return -1;
         }
     }
+    /// @brief retreives the user purchase history from the db
+    /// @returns the formatted user purchase history
     public static String get_purchase_history(long user_id) {
         try {
             PreparedStatement ps = getConnection().prepareStatement("SELECT * FROM get_purchase_history(?)");
@@ -157,18 +163,18 @@ public class Database {
             return "";
         }
     }
-
+    /// @brief performs the self check in for the given user and ticket
     public static void self_check_in(long user_id, long ticket_id){
         try {
             PreparedStatement ps = getConnection().prepareStatement("SELECT * FROM self_check_in(?, ?)");
-            ps.setLong(1, user_id);
-            ps.setLong(2, ticket_id);
+            ps.setLong(1, ticket_id);
+            ps.setLong(2, user_id);
             ps.executeQuery();
         } catch (Exception e) {
             System.out.println("Error: " + e.toString());
         }
     }
-
+    /// @brief changes email
     public static void change_email(long user_id, String new_email){
         try {
             PreparedStatement ps = getConnection().prepareStatement("SELECT * FROM change_email(?, ?)");
@@ -179,6 +185,7 @@ public class Database {
             System.out.println("Error: " + e.toString());
         }
     }
+    /// @brief changes password
     public static void change_password(long user_id, String new_password){
         try {
             PreparedStatement ps = getConnection().prepareStatement("SELECT * FROM change_password(?, ?)");
@@ -189,6 +196,7 @@ public class Database {
             System.out.println("Error: " + e.toString());
         }
     }
+    /// @brief deletes account
     public static void delete_account(long user_id){
         try {
             PreparedStatement ps = getConnection().prepareStatement("SELECT * FROM soft_delete_account(?)");
@@ -198,10 +206,11 @@ public class Database {
             System.out.println("Error: " + e.toString());
         }
     }
-    public static long buy_ticket(long buyerUserId, Long passengerUserId,
-                                  String passengerName, String passengerSurname,
-                                  String passengerEmail, Date passengerDateOfBirth,
-                                  long flightSeatId, String paymentProvider, String externalPaymentRef) {
+    /// @brief creates the purchase entry in the database
+    public static boolean buy_ticket(long buyerUserId, Long passengerUserId,
+                                     String passengerName, String passengerSurname,
+                                     String passengerEmail, Date passengerDateOfBirth,
+                                     long flightSeatId, String paymentProvider, String externalPaymentRef) {
         try {
             PreparedStatement ps = getConnection().prepareStatement(
                     "SELECT create_individual_purchase(?, ?, ?, ?, ?, ?, ?, ?, ?)");
@@ -218,17 +227,12 @@ public class Database {
             ps.setString(9, externalPaymentRef);
             ResultSet result = ps.executeQuery();
             result.next();
-            return result.getLong(1);
+            return result.getBoolean(1);
         } catch (Exception e) {
             System.out.println("Error: " + e.toString());
-            return -1;
+            return false;
         }
     }
-
-
-
-    ///@brief Creates a premade database
-    /// @details Inserts into the database a premade set of airlines, airports, flights and people
     public static void populate_test_data() {
         try {
             Connection conn = getConnection();
@@ -246,7 +250,7 @@ public class Database {
                 rs = ps.executeQuery(); rs.next(); airlineFR = rs.getLong(1);
             }
 
-            // Airports (departure hub FCO has iata_code = NULL)
+            // Airports
             long aptFCO, aptLHR, aptCDG, aptAMS, aptBCN, aptMAD;
             try (PreparedStatement ps = conn.prepareStatement(
                     "INSERT INTO airports (iata_code, airport_name, nation) VALUES (?, ?, ?) RETURNING airport_id")) {
@@ -274,7 +278,7 @@ public class Database {
                 ps.setLong(1, airlineFR); rs = ps.executeQuery(); rs.next(); planeFR1 = rs.getLong(1);
             }
 
-            // Users – admin first (null actor = bootstrap), then the rest
+            // Users
             long adminId, devId, agencyId, person1, person2, person3;
             try (PreparedStatement ps = conn.prepareStatement("SELECT create_admin_account(NULL, ?, ?, ?)")) {
                 ps.setString(1, "admin@soar.test"); ps.setString(2, "hashed_admin_pw"); ps.setString(3, "Super Admin");
@@ -298,9 +302,9 @@ public class Database {
                 rs = ps.executeQuery(); rs.next(); person3 = rs.getLong(1);
             }
             try (PreparedStatement ps = conn.prepareStatement("SELECT update_person_profile(?, ?, ?, ?)")) {
-                ps.setLong(1, person1); ps.setString(2, "Alice"); ps.setString(3, "Rossi");  ps.setDate(4, java.sql.Date.valueOf("1990-04-12")); ps.executeQuery();
-                ps.setLong(1, person2); ps.setString(2, "Bob");   ps.setString(3, "Bianchi");ps.setDate(4, java.sql.Date.valueOf("1985-11-03")); ps.executeQuery();
-                ps.setLong(1, person3); ps.setString(2, "Carol"); ps.setString(3, "Verdi");  ps.setDate(4, java.sql.Date.valueOf("1998-07-22")); ps.executeQuery();
+                ps.setLong(1, person1); ps.setString(2, "Alice"); ps.setString(3, "Rossi");   ps.setDate(4, java.sql.Date.valueOf("1990-04-12")); ps.executeQuery();
+                ps.setLong(1, person2); ps.setString(2, "Bob");   ps.setString(3, "Bianchi"); ps.setDate(4, java.sql.Date.valueOf("1985-11-03")); ps.executeQuery();
+                ps.setLong(1, person3); ps.setString(2, "Carol"); ps.setString(3, "Verdi");   ps.setDate(4, java.sql.Date.valueOf("1998-07-22")); ps.executeQuery();
             }
 
             // Flight paths
@@ -317,8 +321,6 @@ public class Database {
                 ps.setLong(1,aptCDG);ps.setLong(2,aptAMS);ps.setInt(3, 80);ps.setDouble(4, 430); rs=ps.executeQuery();rs.next();pathCDG_AMS=rs.getLong(1);
             }
 
-            // Flights + seats via create_flight_with_seats
-            // Seat layout: 1-10 ECONOMY, 11-20 BUSINESS (business_from_seat=11), 21-30 FIRST (first_from_seat=21)
             java.time.LocalDate today = java.time.LocalDate.now(java.time.ZoneOffset.UTC);
             String flightSql =
                     "SELECT create_flight_with_seats(" +
@@ -329,41 +331,41 @@ public class Database {
             // [path, plane, day_offset, hour, min, econ, biz, first]
             Object[][] flights = {
                     // FCO->LHR
-                    {pathFCO_LHR, planeAZ1, 0,  7, 30,  89.99, 219.99, 449.99},
-                    {pathFCO_LHR, planeAZ1, 0, 15,  0,  99.99, 229.99, 459.99},
-                    {pathFCO_LHR, planeLH1, 1,  8,  0,  84.99, 209.99, 429.99},
-                    {pathFCO_LHR, planeAZ2, 1, 16, 30,  94.99, 224.99, 444.99},
-                    {pathFCO_LHR, planeAZ1, 3,  9,  0,  79.99, 199.99, 399.99},
+                    {pathFCO_LHR, planeAZ1, 1,  7, 30,  89.99, 219.99, 449.99},
+                    {pathFCO_LHR, planeAZ1, 1, 15,  0,  99.99, 229.99, 459.99},
+                    {pathFCO_LHR, planeLH1, 2,  8,  0,  84.99, 209.99, 429.99},
+                    {pathFCO_LHR, planeAZ2, 2, 16, 30,  94.99, 224.99, 444.99},
+                    {pathFCO_LHR, planeAZ1, 4,  9,  0,  79.99, 199.99, 399.99},
                     // FCO->CDG
-                    {pathFCO_CDG, planeAZ2, 0,  6, 45,  79.99, 199.99, 399.99},
-                    {pathFCO_CDG, planeLH1, 0, 14, 15,  89.99, 209.99, 419.99},
-                    {pathFCO_CDG, planeAZ1, 1,  7,  0,  74.99, 194.99, 394.99},
-                    {pathFCO_CDG, planeFR1, 1, 19,  0,  69.99, 189.99, 389.99},
-                    {pathFCO_CDG, planeAZ2, 3, 10, 30,  84.99, 204.99, 409.99},
+                    {pathFCO_CDG, planeAZ2, 1,  6, 45,  79.99, 199.99, 399.99},
+                    {pathFCO_CDG, planeLH1, 1, 14, 15,  89.99, 209.99, 419.99},
+                    {pathFCO_CDG, planeAZ1, 2,  7,  0,  74.99, 194.99, 394.99},
+                    {pathFCO_CDG, planeFR1, 2, 19,  0,  69.99, 189.99, 389.99},
+                    {pathFCO_CDG, planeAZ2, 4, 10, 30,  84.99, 204.99, 409.99},
                     // FCO->AMS
-                    {pathFCO_AMS, planeLH1, 0,  8,  0, 109.99, 249.99, 499.99},
-                    {pathFCO_AMS, planeAZ2, 0, 17, 45, 119.99, 259.99, 509.99},
-                    {pathFCO_AMS, planeFR1, 1,  6, 30,  99.99, 239.99, 479.99},
-                    {pathFCO_AMS, planeLH1, 1, 13,  0, 104.99, 244.99, 489.99},
-                    {pathFCO_AMS, planeAZ1, 3, 11,  0,  94.99, 234.99, 469.99},
+                    {pathFCO_AMS, planeLH1, 1,  8,  0, 109.99, 249.99, 499.99},
+                    {pathFCO_AMS, planeAZ2, 1, 17, 45, 119.99, 259.99, 509.99},
+                    {pathFCO_AMS, planeFR1, 2,  6, 30,  99.99, 239.99, 479.99},
+                    {pathFCO_AMS, planeLH1, 2, 13,  0, 104.99, 244.99, 489.99},
+                    {pathFCO_AMS, planeAZ1, 4, 11,  0,  94.99, 234.99, 469.99},
                     // FCO->BCN
-                    {pathFCO_BCN, planeFR1, 0,  9, 15,  59.99, 179.99, 359.99},
-                    {pathFCO_BCN, planeAZ2, 0, 18, 30,  69.99, 189.99, 369.99},
-                    {pathFCO_BCN, planeFR1, 1,  7, 45,  54.99, 174.99, 349.99},
-                    {pathFCO_BCN, planeAZ1, 1, 15,  0,  64.99, 184.99, 364.99},
-                    {pathFCO_BCN, planeFR1, 3,  8,  0,  49.99, 169.99, 339.99},
+                    {pathFCO_BCN, planeFR1, 1,  9, 15,  59.99, 179.99, 359.99},
+                    {pathFCO_BCN, planeAZ2, 1, 18, 30,  69.99, 189.99, 369.99},
+                    {pathFCO_BCN, planeFR1, 2,  7, 45,  54.99, 174.99, 349.99},
+                    {pathFCO_BCN, planeAZ1, 2, 15,  0,  64.99, 184.99, 364.99},
+                    {pathFCO_BCN, planeFR1, 4,  8,  0,  49.99, 169.99, 339.99},
                     // FCO->MAD
-                    {pathFCO_MAD, planeLH1, 0, 10,  0, 119.99, 269.99, 529.99},
-                    {pathFCO_MAD, planeFR1, 0, 20,  0, 129.99, 279.99, 539.99},
-                    {pathFCO_MAD, planeAZ2, 1,  9, 30, 109.99, 259.99, 519.99},
-                    {pathFCO_MAD, planeLH1, 1, 17,  0, 114.99, 264.99, 524.99},
-                    {pathFCO_MAD, planeFR1, 3, 12,  0,  99.99, 249.99, 499.99},
-                    // LHR->FCO (return / one-stop support)
-                    {pathLHR_FCO, planeAZ1, 1, 12,  0,  89.99, 219.99, 449.99},
-                    {pathLHR_FCO, planeAZ2, 2,  8,  0,  84.99, 209.99, 429.99},
-                    // CDG->AMS (second leg for one-stop FCO->CDG->AMS)
-                    {pathCDG_AMS, planeLH1, 1, 12, 30,  49.99, 139.99, 279.99},
-                    {pathCDG_AMS, planeFR1, 3, 14,  0,  44.99, 134.99, 269.99},
+                    {pathFCO_MAD, planeLH1, 1, 10,  0, 119.99, 269.99, 529.99},
+                    {pathFCO_MAD, planeFR1, 1, 20,  0, 129.99, 279.99, 539.99},
+                    {pathFCO_MAD, planeAZ2, 2,  9, 30, 109.99, 259.99, 519.99},
+                    {pathFCO_MAD, planeLH1, 2, 17,  0, 114.99, 264.99, 524.99},
+                    {pathFCO_MAD, planeFR1, 4, 12,  0,  99.99, 249.99, 499.99},
+                    // LHR->FCO
+                    {pathLHR_FCO, planeAZ1, 2, 12,  0,  89.99, 219.99, 449.99},
+                    {pathLHR_FCO, planeAZ2, 3,  8,  0,  84.99, 209.99, 429.99},
+                    // CDG->AMS
+                    {pathCDG_AMS, planeLH1, 2, 12, 30,  49.99, 139.99, 279.99},
+                    {pathCDG_AMS, planeFR1, 4, 14,  0,  44.99, 134.99, 269.99},
             };
 
             try (PreparedStatement ps = conn.prepareStatement(flightSql)) {
@@ -389,5 +391,4 @@ public class Database {
         } catch (Exception e) {
             System.out.println("Error: " + e.toString());
         }
-    }
-}
+    }}

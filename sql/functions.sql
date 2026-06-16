@@ -44,9 +44,8 @@ AS $$
       AND fs.seat_status = 'AVAILABLE'
       AND (p_destination_airport_id IS NULL OR dst.airport_id = p_destination_airport_id)
       AND (p_departure_airport_id IS NULL OR dep.airport_id = p_departure_airport_id)
-      AND f.departure_time >= COALESCE(p_flight_date, CURRENT_DATE)
-      AND f.departure_time < COALESCE(p_flight_date, CURRENT_DATE) + INTERVAL '1 day'
-      AND (p_earliest_departure IS NULL OR f.departure_time::TIME >= p_earliest_departure)
+      AND f.departure_time >= COALESCE(p_flight_date::TIMESTAMPTZ, NOW())
+      AND f.departure_time < COALESCE(p_flight_date::TIMESTAMPTZ + INTERVAL '1 day', NOW() + INTERVAL '7 days')      AND (p_earliest_departure IS NULL OR f.departure_time::TIME >= p_earliest_departure)
       AND (p_latest_departure IS NULL OR f.departure_time::TIME <= p_latest_departure)
       AND (p_airline_id IS NULL OR al.airline_id = p_airline_id)
       AND (p_seat_class IS NULL OR fs.seat_class = p_seat_class)
@@ -94,8 +93,8 @@ AS $$
         fs.seat_number,
         ps.name,
         ps.surname,
-        COALESCE(f.check_in_open_at,  f.departure_time - INTERVAL '24 hours'),
-        COALESCE(f.check_in_close_at, f.departure_time - INTERVAL '2 hours')
+        COALESCE(f.check_in_open_at,  t.issued_at),
+        COALESCE(f.check_in_close_at, f.departure_time)
     FROM tickets t
     JOIN purchases p       ON p.purchase_id     = t.purchase_id
     JOIN passengers ps     ON ps.passenger_id   = t.passenger_id
@@ -108,8 +107,8 @@ AS $$
     JOIN airlines al       ON al.airline_id     = pl.airline_id
     WHERE t.ticket_status = 'ISSUED'
       AND f.status IN ('SCHEDULED', 'DELAYED')
-      AND NOW() BETWEEN COALESCE(f.check_in_open_at,  f.departure_time - INTERVAL '24 hours')
-                    AND COALESCE(f.check_in_close_at, f.departure_time - INTERVAL '2 hours')
+      AND NOW() BETWEEN COALESCE(f.check_in_open_at,  t.issued_at)
+                    AND COALESCE(f.check_in_close_at, f.departure_time)
       AND (p.buyer_user_id = p_user_id OR ps.user_id = p_user_id)
     ORDER BY f.departure_time;
 $$;
@@ -230,7 +229,7 @@ CREATE OR REPLACE FUNCTION create_individual_purchase(
     p_external_payment_ref VARCHAR,
     p_currency CHAR(3) DEFAULT 'EUR'
 )
-RETURNS BIGINT
+RETURNS BOOLEAN
 LANGUAGE plpgsql
 AS $$
 DECLARE
@@ -245,39 +244,29 @@ BEGIN
     WHERE fs.flight_seat_id = p_flight_seat_id
       AND fs.seat_status = 'AVAILABLE'
     FOR UPDATE;
-
     IF NOT FOUND THEN
-        RAISE EXCEPTION 'seat not available';
+        RETURN FALSE;
     END IF;
-
     INSERT INTO passengers (user_id, name, surname, email, date_of_birth)
     VALUES (p_passenger_user_id, p_passenger_name, p_passenger_surname, p_passenger_email, p_passenger_date_of_birth)
     RETURNING passenger_id INTO v_passenger_id;
-
     v_receipt_number = 'R-' || TO_CHAR(CLOCK_TIMESTAMP(), 'YYYYMMDDHH24MISSMS') || '-' || SUBSTRING(MD5(RANDOM()::TEXT), 1, 8);
-
     INSERT INTO purchases (buyer_user_id, purchase_type, gross_amount, discount_percent, final_amount, receipt_number, purchase_status)
     VALUES (p_buyer_user_id, 'INDIVIDUAL', v_price, 0, v_price, v_receipt_number, 'PAID')
     RETURNING purchase_id INTO v_purchase_id;
-
     INSERT INTO payments (purchase_id, provider, external_payment_ref, amount, currency, payment_status, paid_at)
     VALUES (v_purchase_id, p_payment_provider, p_external_payment_ref, v_price, p_currency, 'CAPTURED', NOW());
-
     UPDATE flight_seats
     SET seat_status = 'SOLD'
     WHERE flight_seat_id = p_flight_seat_id;
-
     INSERT INTO tickets (purchase_id, passenger_id, flight_seat_id, ticket_price, ticket_status)
     VALUES (v_purchase_id, v_passenger_id, p_flight_seat_id, v_price, 'ISSUED')
     RETURNING ticket_id INTO v_ticket_id;
-
     INSERT INTO audit_logs (actor_user_id, action_type, target_table, target_id, metadata)
     VALUES (p_buyer_user_id, 'TICKET_PURCHASE', 'purchases', v_purchase_id, JSONB_BUILD_OBJECT('ticket_id', v_ticket_id));
-
     INSERT INTO notifications (user_id, ticket_id, notification_type, channel, notification_status, scheduled_at)
     VALUES (p_buyer_user_id, v_ticket_id, 'INVOICE', 'EMAIL', 'PENDING', NOW());
-
-    RETURN v_purchase_id;
+    RETURN TRUE;
 END;
 $$;
 
@@ -492,17 +481,14 @@ BEGIN
       AND (ps.user_id = p_requesting_user_id OR p.buyer_user_id = p_requesting_user_id)
       AND t.ticket_status = 'ISSUED'
       AND f.status IN ('SCHEDULED', 'DELAYED')
-      AND NOW() BETWEEN COALESCE(f.check_in_open_at, f.departure_time - INTERVAL '24 hours')
-                    AND COALESCE(f.check_in_close_at, f.departure_time - INTERVAL '2 hours')
+      AND NOW() BETWEEN COALESCE(f.check_in_open_at,  t.issued_at)
+                    AND COALESCE(f.check_in_close_at, f.departure_time)
     RETURNING t.ticket_id, t.ticket_status, t.checked_in_at;
-
     IF NOT FOUND THEN
         RAISE EXCEPTION 'check-in not allowed';
     END IF;
-
     INSERT INTO audit_logs (actor_user_id, action_type, target_table, target_id, metadata)
     VALUES (p_requesting_user_id, 'SELF_CHECK_IN', 'tickets', p_ticket_id, NULL);
-
     INSERT INTO notifications (user_id, ticket_id, notification_type, channel, notification_status, scheduled_at)
     VALUES (p_requesting_user_id, p_ticket_id, 'BOARDING_PASS', 'EMAIL', 'PENDING', NOW());
 END;
@@ -653,8 +639,11 @@ BEGIN
         RAISE EXCEPTION 'plane not found';
     END IF;
 
-    INSERT INTO flights (plane_id, flight_path_id, departure_time, status)
-    VALUES (p_plane_id, p_flight_path_id, p_departure_time, 'SCHEDULED')
+    INSERT INTO flights (plane_id, flight_path_id, departure_time, check_in_open_at, check_in_close_at, status)
+    VALUES (p_plane_id, p_flight_path_id, p_departure_time,
+            p_departure_time - INTERVAL '24 hours',
+            p_departure_time,
+            'SCHEDULED')
     RETURNING flight_id INTO v_flight_id;
 
     FOR v_seat_number IN 1..v_capacity LOOP
@@ -679,7 +668,6 @@ BEGIN
     RETURN v_flight_id;
 END;
 $$;
-
 CREATE OR REPLACE FUNCTION delay_flight(
     p_admin_user_id BIGINT,
     p_flight_id BIGINT,
