@@ -17,6 +17,7 @@
 \usepackage{graphicx}
 \usepackage{changes}
 \usepackage{xcolor}
+\usepackage{graphicx}
 \usepackage{changepage}
 
 \setstretch{1.15}
@@ -120,7 +121,7 @@
                 \end{tabular}
 
         \subsection{Class Diagram}
-        
+        \includegraphics[width=\linewidth]{./diagrams/class_diagram.pdf}
         
     \newpage
         
@@ -132,7 +133,8 @@
 		
 		\subsection{Language Used}
             For the program back-end, the language chosen was Java, because it is a versatile language made to handle object oriented programming, of which the program will make use frequently. Ideally, the program's front end would be a public website, and it would be written in HTML, but given the restriction of the project it is implemented as a private CLI. The code interacts with the database with a set of SQL queries to retrieve pertinent information.
-
+		
+		\newpage
         \subsection{Database}
             To manage the various entries of users, flights and such we developed a PostgreSQL database with the following schema with 3 main tables being:
             \begin{enumerate}
@@ -140,10 +142,24 @@
                 \item Tickets
                 \item Flights
             \end{enumerate}
-
+            \includegraphics[width=\linewidth]{./diagrams/db/db_schema.png}
+		
+		
+			\newpage
             The 3 main tables have the following attributes and specifications:
+            
+            \subsubsection{users table}
+            \includegraphics[width=\linewidth]{./diagrams/db/users_table.png}
+            
+            \subsubsection{flights table}
+            \includegraphics[width=\linewidth]{./diagrams/db/flights_table.png}
+            
+            \subsubsection{tickets table}
+            \includegraphics[width=\linewidth]{./diagrams/db/tickets_table.png}
 
-            Here is an example of entries of the Users table:
+			\newpage
+            Here is an example of entries of the Users table: \\
+            \includegraphics[width=\linewidth]{./diagrams/db/users_instance.png}
         
         \subsection{Dependencies}
             List ot the dependencies used in the implementation: 
@@ -166,6 +182,7 @@
             He can also search and organize lists of flights, however the action is restricted to the act of viewing the results and nothing more as it is required for the user to be registered to perform further actions. \\
             
             \subsubsection{Main Flow}
+            \includegraphics[width=\linewidth]{./diagrams/user_flows/unregistered_user.png}
             
 
         \subsection{Normal Registered User \& Travel Agencies}
@@ -176,10 +193,10 @@
             Lastly any user that has accessed on the site will have the opportunity to access its account page where more function are available, that will be addressed in a later user flow common to any registered user. \\
             
             \subsubsection{Main Flow}
-            
+            \includegraphics[width=\linewidth]{./diagrams/user_flows/registered_user.png}
             
             \subsubsection{Ticket Purchase Extension Flow}
-            
+			\includegraphics[width=\linewidth]{./diagrams/user_flows/purchase_ticket.png}
 
 		\subsection{Admin}
             The admin flow covers use cases "5.13 Edit Flights Data" and "5.14 Data Analysis" from the second document and links with (insert class and methods). \\ 
@@ -188,10 +205,10 @@
             Again, a special page dedicated to account information can be accessed and will be shown later in the document. \\
 
             \subsubsection{Main Flow}
-
+            \includegraphics[width=\linewidth]{./diagrams/user_flows/admin.png}
 
             \subsubsection{Edit Flight Data Extension Flow}
-
+			\includegraphics[width=\linewidth]{./diagrams/user_flows/edit_flight_information.png}
 
         \subsection{Developers}
             The user flow for developers only covers the use case "5.15 Backup Creation" from the D2 document and links with (insert class and methods). \\
@@ -199,14 +216,16 @@
             Once more, developers can access their account page that will be discussed later. \\
 
             \subsubsection{Main Flow}
-
-
+			\includegraphics[width=\linewidth]{./diagrams/user_flows/developer.png}
+	
+		\newpage
         \subsection{Common Flow - Account Information Page}
             The following user flow addresses use cases "5.5 Update Information", "5.6 Delete Account" and "5.7 Change Password" from the previous document and links with (insert class and methods). \\
             Any user that accesses this page can carry out these actions: update their profile's information such as email, changing the account's password and if necessary even deleting the profile. One can always change his mind and stop the action mid way through to avoid unnecessary modifications. \\
             User will also be able to go back to the homepage after they are done visiting the account information page. \\
 
             \subsubsection{Account Page Flow}
+            \includegraphics[width=\linewidth]{./diagrams/user_flows/account_page.png}
 
     \newpage
     

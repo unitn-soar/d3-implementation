@@ -122,6 +122,7 @@ public class Main {
                             date = java.sql.Date.valueOf(scanner.nextLine().trim());
 
 
+
                             Database.buy_ticket(Session.getUser_id(), Session.getUser_id(), name, surname,Session.getEmail(), date, 1, "Provider", "");
                             System.out.println("Ticket successfully bought!");
                         }

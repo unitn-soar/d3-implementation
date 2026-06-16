@@ -54,6 +54,7 @@ public class Database {
         }
     }
 
+
     ///@brief Returns a list of all existing airports
     /// @returns All existing airports and relative informations as a string
     public static String airport_list(){
