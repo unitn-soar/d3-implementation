@@ -824,7 +824,7 @@ CREATE OR REPLACE FUNCTION create_person_account(
 )
 RETURNS BIGINT
 LANGUAGE plpgsql
-AS $
+AS $$
 DECLARE
     v_user_id BIGINT;
 BEGIN
@@ -843,7 +843,7 @@ BEGIN
 
     RETURN v_user_id;
 END;
-$;
+$$;
 
 CREATE OR REPLACE FUNCTION create_travel_agency_account(
     p_email VARCHAR,
@@ -1023,7 +1023,53 @@ BEGIN
     RETURN p_user_id;
 END;
 $$;
+CREATE OR REPLACE FUNCTION change_password(
+    p_user_id           BIGINT,
+    p_new_password_hash VARCHAR
+)
+RETURNS VOID
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    UPDATE users
+    SET password_hash = p_new_password_hash
+    WHERE user_id = p_user_id
+      AND deleted_at IS NULL;
 
+    IF NOT FOUND THEN
+        RAISE EXCEPTION 'user not found';
+    END IF;
+
+    UPDATE sessions
+    SET terminated_at = NOW()
+    WHERE user_id = p_user_id
+      AND terminated_at IS NULL;
+
+    INSERT INTO audit_logs (actor_user_id, action_type, target_table, target_id, metadata)
+    VALUES (p_user_id, 'PASSWORD_CHANGE', 'users', p_user_id, NULL);
+END;
+$$;
+CREATE OR REPLACE FUNCTION change_email(
+    p_user_id   BIGINT,
+    p_new_email VARCHAR
+)
+RETURNS VOID
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    UPDATE users
+    SET email = p_new_email
+    WHERE user_id = p_user_id
+      AND deleted_at IS NULL;
+
+    IF NOT FOUND THEN
+        RAISE EXCEPTION 'user not found';
+    END IF;
+
+    INSERT INTO audit_logs (actor_user_id, action_type, target_table, target_id, metadata)
+    VALUES (p_user_id, 'EMAIL_CHANGE', 'users', p_user_id, NULL);
+END;
+$$;
 CREATE OR REPLACE FUNCTION create_password_reset_token(
     p_email VARCHAR,
     p_token_hash VARCHAR,
@@ -1283,4 +1329,23 @@ AS $$
     FROM airports
     WHERE (p_nation IS NULL OR nation = p_nation)
     ORDER BY nation, airport_name;
+$$;
+CREATE OR REPLACE FUNCTION check_credentials(
+    p_email         VARCHAR,
+    p_password_hash VARCHAR
+)
+RETURNS BIGINT
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    v_user_id BIGINT;
+BEGIN
+    SELECT user_id
+    INTO v_user_id
+    FROM users
+    WHERE email = p_email
+      AND password_hash = p_password_hash
+      AND deleted_at IS NULL;
+    RETURN v_user_id; -- returns NULL if not found
+END;
 $$;

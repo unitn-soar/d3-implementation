@@ -7,7 +7,11 @@ public enum Command {
     SEARCH_FLIGHT,
     HELP,
     EXIT,
-    INVALID;
+    INVALID,
+    EDIT_ACCOUNT,
+    DELETE_ACCOUNT,
+    CHANGE_PASSWORD,
+    SELF_CHECK_IN;
 
     ///@brief Returns the corresponding Command
     public static Command fromString(String input){
@@ -22,8 +26,10 @@ public enum Command {
     public static String help(){
         StringBuilder out = new StringBuilder();
         for(Command cmd: Command.values()){
-            String app = "- " + cmd.name() + "\n";
-            out.append(app);
+            if(cmd.name() != "INVALID") {
+                String app = "- " + cmd.name() + "\n";
+                out.append(app);
+            }
         }
         return out.toString();
     }
