@@ -78,7 +78,7 @@
 	\tableofcontents
 	\newpage
 	\section{Document Objective}
-		This document aims to give a fully detailed explanation of the functionalities implemented in the Soar web software for the purpose of purchasing and handling of flight tickets. This document provides motivations for choosing Java as our programming language and a PostgreSQL database to retrieve data during development. It will contain the user flows for each of the four different types of users (Standard User, Travel Agency, Admin and Developer) but only cover the implementation of operations that can be carried out by Standard Users or Travel Agencies. Additionally, it will also give some insight in the code's functions, classes, and implementations. The document is concluded with a section for the GitHub Repository Information and a general team assessment, giving details on how each member of the team contributed to the project as a whole.
+		This document aims to give a fully detailed explanation of the functionalities implemented in the Soar web software for the purpose of purchasing and handling of flight tickets. This document provides motivations behind our choices during development such as choosing Java as our programming language and deploying a PostgreSQL database to store and retrieve data. It will contain the user flows for each of the four different types of users (Standard User, Travel Agency, Admin and Developer) but only cover the implementation of operations that can be carried out by Standard Users or Travel Agencies. Additionally, it will also give some insight in the code's functions, classes, and implementations. The document is concluded with a section for the GitHub Repository Information and a general team assessment, giving details on how each member of the team contributed to the project as a whole.
 
     \section{D2 Changes}
 
@@ -99,7 +99,7 @@
                     & Registered User --- Their interest is changing information about their account that may be outdated \\ \cline{2-2}
                     
                     \textbf{Preconditions} & The user has to have an account and be currently logged in. \\ \hline
-                    \textbf{Minimal Guarantees} & The user's personal information are not lost either way and if the action fails the old data will be rolled back. \\ \hline
+                    \textbf{Minimal Guarantees} & The user's personal information is not lost either way and if the action fails the old data will be rolled back. \\ \hline
                     \textbf{Success Guarantees} & The user's personal information will be updated with the new data inserted. \\ \hline
                     \textbf{Trigger} & User wanting to change his account's data \\ \hline
                     
@@ -113,8 +113,8 @@
                     2a.1 & The inserted data may be invalid \\ \hline
                     2a.2 & The user is asked to insert the new information again  \\ \hline
                     2a.3 & After 3 attempts, if the user hasn't provided valid data he will be brought back to the previous section \\ \hline
-                    2b.1 & The user may decide to don't change any information \\ \hline
-                    2b.2 & The user can choose to cancel the operation and keep the current information \\ \hline 
+                    2b.1 & The user may decide not to change any information \\ \hline
+                    2b.2 & The user can choose to cancel the operation and retain their current information \\ \hline 
                     
 					\multicolumn{2}{|l|}{\textbf{Link to FRs and NFRs}} \\ \hline
 					\multicolumn{2}{|p{14cm}|}{The use case covers FRs 6.3 and 17.3 and has to try to respect NFRs 5 and 8} \\ \hline             
@@ -128,7 +128,7 @@
 	\section{Architecture Choice and Language}
 				
 		\subsection{Covered Objectives}
-        	For the development of this application, the team has decided on a three tier architecture. This type of architecture provides separate functionalities for each type of user, that interact with a single back-end program that manages the various interactions with the system. The program then interacts with a separate database, containing informations related to users, flights and purchases. This architecture provides a clear separation of tasks, thus improving security on the database and making maintenance easier in case of updates or bug fixing.
+        	For the development of this application, the team has decided on a three tier architecture. This type of architecture provides separate functionalities for each type of user, that interact with a single back-end program that manages the various interactions with the system. The program then interacts with a separate database, containing information related to users, flights and purchases. This architecture provides a clear separation of tasks, thus improving security on the database and making maintenance easier in case of updates or bug fixing.
                 
 		
 		\subsection{Language Used}
@@ -136,7 +136,7 @@
 		
 		\newpage
         \subsection{Database}
-            To manage the various entries of users, flights and such we developed a PostgreSQL database with the following schema with 3 main tables being:
+            To manage the various entries of users, flights and such we developed a PostgreSQL database featuring three core tables:
             \begin{enumerate}
                 \item Users
                 \item Tickets
@@ -172,14 +172,14 @@
     
     \section{User Flows}
 
-        In this section of the development document we report "user flows" for every kind of user that can interact with our system, ranging from unregistered users to registered users such as travel agencies, admins and developers. \\
+        In this section of the development document we report "user flows" for every kind of user that can interact with our system, ranging from anonymous unregistered users to registered users such as travel agencies, admins and developers. \\
         The first figure will describe the limited action a unregistered user can carry out such as registration or log in, then the following flows will expand on the actions of registered users, categorized in normal registered user or travel agency flows with actions such as purchasing tickets, admin flows covering their privileges on editing flights data and developer flows interested in backing up data as a fail safe. \\
         Lastly another figure will be presented to show the common actions that every registered user can conduct while visiting their account information section.
 
         \subsection{Unregistered User}
-            The following flow covers use cases "5.2 View and Search Flight", "5.3 Account Creation" and "5.4 Access Account" from the previous document and links with (insert class and methods). \\
+            The following flow covers use cases "5.2 View and Search Flight", "5.3 Account Creation" and "5.4 Access Account" from the previous document and links with classes Database and Session in the Main class using methods airport\_list, search\_direct\_flights, setEmail, register\_user, check\_credentials and setUser\_id. Additionally, basic functions such as getters and setters are often called inside the previously mentioned methods. \\
             The unregistered user can perform a small number of actions, the main ones being the ability to create a personal account or logging inside their own if already existing while always having the ability to go back and stop the process. \\
-            He can also search and organize lists of flights, however the action is restricted to the act of viewing the results and nothing more as it is required for the user to be registered to perform further actions. \\
+            He can also search and organize lists of flights, however the action is restricted to the act of viewing the results and nothing more as it is required for the user to be registered to perform further actions. 
             
             \subsubsection{Main Flow}
             \includegraphics[width=\linewidth]{./diagrams/user_flows/unregistered_user.png}
@@ -187,10 +187,10 @@
 
         \subsection{Normal Registered User \& Travel Agencies}
             Here we present the two flows concerning all actions that can be taken by Users and Travel Agencies after having logged in their account. \\
-            The first flow covers use cases "5.2 View and Search Flight", "5.10 Perform Self Check-In", "5.11 View Purchase History" and introduces the second flow that addresses use cases "5.9 Purchase Ticket", "5.12 Purchase Tickets in Bulk" and "5.8 Send Notification", moreover it links with (insert class and methods). \\
+            The first flow covers use cases "5.2 View and Search Flight", "5.10 Perform Self Check-In", "5.11 View Purchase History" and introduces the second flow that addresses use cases "5.9 Purchase Ticket", "5.12 Purchase Tickets in Bulk" and "5.8 Send Notification", moreover it links with classes Database and Session in the Main class calling the methods airport\_list, search\_direct\_flights, get\_pending\_chekcins, self\_check\_in, get\_purchase\_history and buy\_ticket. Moreover, inside the mentioned functions, methods like getters and setters are often used. \\
             First of all, the interested user can now select a flight after the research and actually follow the procedure to purchase one or more tickets while still having the possibility to go back and choose a more appropriate flight, they will be asked to provide various information including a valid payment method. When the action is completed the system will take care of sending a notification of the user about the successful purchase. \\
             Other than that the user will also be able to carry out self check-in on tickets that respect the window for it or view the purchases that have been done in the past on the account. \\
-            Lastly any user that has accessed on the site will have the opportunity to access its account page where more function are available, that will be addressed in a later user flow common to any registered user. \\
+            Lastly any user that has accessed on the site will have the opportunity to access its account page where more function are available, that will be addressed in a later user flow common to any registered user. 
             
             \subsubsection{Main Flow}
             \includegraphics[width=\linewidth]{./diagrams/user_flows/registered_user.png}
@@ -199,10 +199,10 @@
 			\includegraphics[width=\linewidth]{./diagrams/user_flows/purchase_ticket.png}
 
 		\subsection{Admin}
-            The admin flow covers use cases "5.13 Edit Flights Data" and "5.14 Data Analysis" from the second document and links with (insert class and methods). \\ 
-            Admins have different authorizations from standard users that allow the firstly to edit or add flights to the database of our software. From the appropriate window they will be given the choice to either add a new flight, comprehensive of destination and departure, duration of flight and distance in kilometers, check-in windows and number of seats per class, or modify an existing one and if necessary even deleting one. \\
+            The admin flow covers use cases "5.13 Edit Flights Data" and "5.14 Data Analysis" from the second document but does not link with any class as it has not been currently implemented in the code, nonetheless some stand-in class (Admin) and methods have been created. \\ 
+            Admins have different authorizations from standard users that grants them the ability to edit or add flights to the database of our software. From the appropriate window they will be given the choice to either add a new flight, including details such as destination and departure, duration of flight and distance in kilometers, check-in windows and number of seats per class, or modify an existing one and if necessary even deleting one. \\
             The other function exclusive of admins is the ability to analyze collected data from users, allowing them to mold the database to better fit passenger needs. \\
-            Again, a special page dedicated to account information can be accessed and will be shown later in the document. \\
+            Again, a special page dedicated to account information can be accessed and will be shown later in the document. 
 
             \subsubsection{Main Flow}
             \includegraphics[width=\linewidth]{./diagrams/user_flows/admin.png}
@@ -211,16 +211,16 @@
 			\includegraphics[width=\linewidth]{./diagrams/user_flows/edit_flight_information.png}
 
         \subsection{Developers}
-            The user flow for developers only covers the use case "5.15 Backup Creation" from the D2 document and links with (insert class and methods). \\
+            The user flow for developers only covers the use case "5.15 Backup Creation" from the D2 document, however, as they are a marginal part of the software there is no class or method developed at this time, but some temporary class (Developer) with its basic methods has still been designed. \\
             When choosing to perform a backup developers will be show the most recent backup in beforehand so they know whether or not a backup is strictly necessary. If they decide to create a new one they will be prompted to confirm the creation of the new backup followed by the deletion of the older one after the action successfully goes through. \\
-            Once more, developers can access their account page that will be discussed later. \\
+            Once more, developers can access their account page that will be discussed later.
 
             \subsubsection{Main Flow}
 			\includegraphics[width=\linewidth]{./diagrams/user_flows/developer.png}
 	
 		\newpage
         \subsection{Common Flow - Account Information Page}
-            The following user flow addresses use cases "5.5 Update Information", "5.6 Delete Account" and "5.7 Change Password" from the previous document and links with (insert class and methods). \\
+            The following user flow addresses use cases "5.5 Update Information", "5.6 Delete Account" and "5.7 Change Password" from the previous document and links with classes Database and Session in the Main class using methods change\_email, delete\_account and change\_password. Other functions such as getters and setters will be often called inside the before mentioned methods. \\
             Any user that accesses this page can carry out these actions: update their profile's information such as email, changing the account's password and if necessary even deleting the profile. One can always change his mind and stop the action mid way through to avoid unnecessary modifications. \\
             User will also be able to go back to the homepage after they are done visiting the account information page. \\
 
